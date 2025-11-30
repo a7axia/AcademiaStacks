@@ -149,7 +149,7 @@ app.use(helmet({
 // This prevents brute force attacks on login, register, and verification endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes time window
-  max: process.env.NODE_ENV === 'production' ? 5 : 20, // 5 attempts in production, 20 in development
+  max: 100000, // TESTING: Increased to 10000 for performance testing
   message: {
     error: 'Too many authentication attempts from this IP, please try again later.'
   },
@@ -161,7 +161,7 @@ const authLimiter = rateLimit({
 // This prevents abuse and ensures fair usage of the API
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes time window
-  max: 100, // 100 requests per window per IP address
+  max: 10000, // TESTING: Increased to 10000 for performance testing
   message: {
     error: 'Too many requests from this IP, please try again later.'
   },

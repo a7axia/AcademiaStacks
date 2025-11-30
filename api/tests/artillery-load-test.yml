@@ -1,0 +1,59 @@
+config:
+  target: "http://localhost:8800"
+  phases:
+    # Warm up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    # Gradual ramp up
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp up load"
+    # Sustained high load
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained high load"
+    # Cool down
+    - duration: 30
+      arrivalRate: 10
+      name: "Cool down"
+  plugins:
+    expect: {}
+  ensure:
+    maxErrorRate: 1    # Maximum 1% error rate
+    p95: 500          # 95% of requests should be faster than 500ms
+    p99: 1000         # 99% of requests should be faster than 1000ms
+
+scenarios:
+
+  # Test NEW version (Promise.all)
+  - name: "Get Materials - NEW (Promise.all)"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/materials?page={{ $randomNumber(1, 5) }}&limit=20"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: materials
+            - hasProperty: pagination
+            - hasProperty: _performance
+
+  # Mixed workload with filters
+  - name: "Get Materials with Filters"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/materials?page={{ $randomNumber(1, 10) }}&limit=20&semester={{ $randomNumber(1, 8) }}"
+          expect:
+            - statusCode: 200
+
+  # Test materials by type
+  - name: "Get Materials by Type"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/materials/type/Notes?page=1&limit=20"
+          expect:
+            - statusCode: 200

@@ -52,6 +52,22 @@ const fetchPaginatedMaterials = async (filter, skip, finalLimit) => {
   return [materials, totalMaterials];
 };
 
+// OLD VERSION: Sequential execution (SLOWER - for comparison)
+// Uncomment this function and comment the one above to test OLD version
+/*
+const fetchPaginatedMaterials = async (filter, skip, finalLimit) => {
+  const materials = await Material.find(filter)
+    .skip(skip)
+    .limit(finalLimit)
+    .sort({createdAt: -1})
+    .lean();
+  
+  const totalMaterials = await Material.countDocuments(filter);
+  
+  return [materials, totalMaterials];
+};
+*/
+
 export const createMaterial = async (req, res, next) => {
   try {
     // SECURITY: Check validation results

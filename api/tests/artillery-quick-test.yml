@@ -1,0 +1,20 @@
+config:
+  target: "http://localhost:8800"
+  phases:
+    - duration: 60
+      arrivalRate: 30
+      name: "Quick comparison test"
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: false
+
+scenarios:
+  - name: "NEW Version (Promise.all)"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/materials?page=1&limit=20"
+          expect:
+            - statusCode: 200
+            - contentType: json

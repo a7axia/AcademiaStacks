@@ -1,0 +1,17 @@
+config:
+  target: "http://localhost:8800"
+  phases:
+    # Gentle test - only 5 requests per second
+    - duration: 30
+      arrivalRate: 5
+      name: "Gentle comparison test"
+
+scenarios:
+  - name: "NEW Version (Promise.all)"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/materials?page=1&limit=20"
+          expect:
+            - statusCode: 200
+            - contentType: json
